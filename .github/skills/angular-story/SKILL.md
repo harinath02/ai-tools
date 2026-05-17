@@ -1,50 +1,42 @@
 ---
 name: angular-story
-description: Implements Angular frontend user stories—components, services, routing, reactive forms, and HTTP client integration. Use for Angular, TypeScript frontend, UI components, or Figma-aligned UI when specs are provided.
+description: Builds Angular features with typed contracts, accessibility, modern state patterns, resilient UX states, and testability. Use when the user asks for work that matches this role or when another agent hands off to this specialty.
 ---
 
-# Angular story agent
+# Angular Story
+
+Deliver frontend work that feels finished to users, not merely wired to an endpoint.
 
 ## Workflow
 
-1. Read acceptance criteria and API contract (OpenAPI or story).
-2. Locate feature module structure (`*.module.ts` or standalone components).
-3. Add/update: model interfaces, service (`HttpClient`), component, template, styles, route.
-4. Wire loading and error states in the template.
-5. Match existing style (Material, Bootstrap, or project CSS).
+- 1. Read acceptance criteria and contract before touching components.
+- 2. Inspect routing, state, and test conventions already used by the app.
+- 3. Add typed models, service calls, components, templates, and routes.
+- 4. Handle loading, empty, error, and success states deliberately.
+- 5. Use accessibility semantics and keyboard-safe interactions.
+- 6. Run the relevant frontend tests/build and report manual verification steps.
 
-## Conventions
+## Decision rules
 
-- Angular 17+; prefer standalone components if the project already uses them.
-- Strong typing for API models; no `any` in services.
-- Unsubscribe or use `async` pipe / `takeUntilDestroyed` for subscriptions.
-- Accessibility: labels, button types, focus on dialogs.
-
-## Design specs
-
-- If user provides Figma URL: use browser tools to inspect layout, or ask for exported PNG/specs in repo.
-- If no design: clean, minimal UI consistent with existing pages.
-
-## Commands
-
-```bash
-npm install
-ng test
-ng serve
-```
+- Prefer the project style first; use signals, standalone APIs, or zoneless patterns only when compatible with the codebase.
+- Prefer typed services over ad-hoc response handling.
+- Use backend proxies for secrets or third-party keys.
+- Choose lazy loading and performance work when feature size or routes justify it.
 
 ## Output
 
-- Files changed; how to verify in browser.
-- Resume demo: brief UX decisions (3 bullets).
+- Files changed
+- User-flow verification steps
+- State handling summary
 
-## Modern standards (when applicable)
+## Shared references
 
-- Standalone components; lazy routes; signals only if project already uses them.
-- a11y on forms; typed HttpClient; environment-based API URL.
-- See [../_shared/MODERN-STANDARDS.md](../_shared/MODERN-STANDARDS.md).
+- Follow [../_shared/MODERN-STANDARDS.md](../_shared/MODERN-STANDARDS.md).
+- Use [../_shared/DECISION-RULES.md](../_shared/DECISION-RULES.md) when choosing between project-fit and greenfield defaults.
+- Use [../_shared/AGENT-OPERATING-MODEL.md](../_shared/AGENT-OPERATING-MODEL.md) for output discipline and handoffs.
 
-## Do not
+## Guardrails
 
-- Change backend code unless user requests full-stack skill.
-- Commit without explicit user request.
+- Preserve existing project conventions unless the user asks for modernization.
+- Keep diffs focused and call out uncertainty rather than inventing facts.
+- Do not commit, push, deploy, or broaden scope unless the user asks.

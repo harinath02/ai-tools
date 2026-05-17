@@ -1,35 +1,35 @@
 ---
 name: Backend (Java / Spring Boot)
-description: Spring Boot, JPA, REST, and Maven conventions for backend/
+description: Spring Boot, JPA, REST, observability, and migration conventions for backend/
 applyTo: "backend/**"
 ---
 # Backend instructions
 
-Apply [general project standards](../copilot-instructions.md).
+Apply the shared standards first.
 
-## Stack
+## Stack policy
 
-- Java 17+, Spring Boot 3.3+, Spring Data JPA, Bean Validation, H2 for local demos unless story says otherwise.
+- For greenfield work, prefer a modern LTS Java line and current Spring Boot when project constraints allow it.
+- For existing apps, preserve the declared Java / Spring Boot versions unless the user requests an upgrade.
 
 ## Layering
 
-- `controller` — HTTP only; `@Valid` on request bodies; thin methods.
-- `service` — business rules and transactions.
-- `repository` — Spring Data JPA interfaces.
-- `model` / `entity` — JPA entities; `dto` — records or immutable DTOs for API.
+- `controller` - HTTP and validation only.
+- `service` - business rules and transaction boundaries.
+- `repository` - persistence interfaces.
+- `model` / `entity` - persistence model; `dto` - API boundary types.
 
 ## REST
 
-- Base path `/api/...`; plural nouns; 201 + `Location` on create; 404 when missing; 204 on delete without body.
-- Prefer **constructor injection**; use **records** for response DTOs when possible.
-- Global errors via `@RestControllerAdvice`.
+- Use plural resources, meaningful status codes, pagination for production lists, and RFC 9457-style error responses.
+- Prefer constructor injection and immutable boundary DTOs.
+- Do not expose internal entities or stack traces as public contracts.
 
-## Modern practices
+## Data and ops
 
-- OpenAPI: add `springdoc-openapi` when the story asks for API docs.
-- Idempotent PUT/PATCH; validate title length and required fields per story.
-- Never log secrets or full auth tokens; use env vars for external API keys.
-- For production-ready stories: consider Flyway migrations, Testcontainers for integration tests, and Micrometer metrics.
+- Use Flyway/Liquibase when the project manages persistent schemas.
+- Add Actuator/Micrometer/OpenTelemetry-compatible signals when the story changes critical flows.
+- Never log secrets or full auth material.
 
 ## Commands
 

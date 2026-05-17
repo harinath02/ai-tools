@@ -1,46 +1,27 @@
-# Testing guide (no Jira)
+# Testing guide
 
-Demo stories in `demo/stories/` replace Jira tickets. Prefer **subagent** prompts in each story file.
+Demo stories in `demo/stories/` replace Jira tickets. Prefer the story files plus the specialist agents that match the work.
 
-## Test matrix
-
-| # | Story | Subagent | Pass |
-|---|-------|----------|------|
-| 1 | STORY-001 | spring-boot-story | `mvnw test`; CRUD works |
-| 2 | STORY-002 | angular-story | UI + API |
-| 3 | STORY-003 | full-stack-developer | CORS + both apps |
-| 4 | STORY-004 | test-writer | Tests green |
-| 5 | STORY-005 | pr-creation, pr-reviewer | PR + review |
-| 6 | STORY-006 | api-integration | `/api/quote` |
-
-## Subagent smoke (no code)
-
-```
-Use the orchestrator subagent. I finished STORY-001. What's next?
-```
-
-```
-Use the pr-reviewer subagent. Review: void x() { return request.getParameter("id"); }
-```
-
-## Verify install
+## Local checks
 
 ```powershell
-# Subagents (12 files)
-(Get-ChildItem C:\Users\alber\ai-tools\.cursor\agents\*.md).Count
-
-# Skills (after setup-local.ps1)
-Get-ChildItem "$env:USERPROFILE\.cursor\skills" -Directory
+.\scripts\validate-agent-pack.ps1
+cd backend
+mvn test
 ```
 
-## Push after tests
+## Quality layers
 
-See `docs/WHAT-YOU-NEED.md` → https://github.com/harinath02/ai-tools
+| Layer | Typical agent | Purpose |
+|-------|---------------|---------|
+| Agent-pack validation | `cicd-agent` | Keep mirrors, counts, and hygiene coherent |
+| Unit / integration | `test-writer` | Prove changed behavior cheaply |
+| Browser E2E | `test-writer` | Prove critical journeys |
+| Security review | `security-engineer`, `pr-reviewer` | Catch unsafe changes before merge |
+| Release readiness | `release-manager` | Confirm rollout and rollback |
 
-## Troubleshooting
+## CI checks
 
-| Problem | Fix |
-|---------|-----|
-| Subagent ignored | Say `Use the X subagent` explicitly |
-| Wrong folder open | Open `ai-tools` as workspace root |
-| Missing skills | `.\scripts\setup-local.ps1` |
+- `CI` - pack validation plus backend/frontend verification
+- `CodeQL` - code scanning
+- `PR Description` - keeps a generated summary block in each pull request body

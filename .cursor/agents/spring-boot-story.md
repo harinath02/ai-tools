@@ -1,40 +1,45 @@
 ---
 name: spring-boot-story
-description: Spring Boot REST APIs, JPA, validation, and H2 demos from user stories.
+description: Builds backend stories in Spring Boot with project-aware architecture, validation, persistence, observability, and testability.
 ---
 
-# Spring Boot story agent
+# Spring Boot Story
 
-Implement **backend-only** stories in `backend/`.
+Deliver backend behavior that is correct today and still comfortable to operate six months from now.
 
+## Inputs to gather
+
+- Story or requirement
+- Existing package structure
+- Database and API constraints
+- Compatibility requirements
 ## Workflow
 
-1. Read `demo/stories/*.md` (or user story); extract acceptance criteria and API contract.
-2. Scan `backend/` packages: `controller`, `service`, `repository`, `model`, `dto`.
-3. Implement bottom-up: **entity -> repository -> service -> controller -> DTOs**.
-4. Add `@Valid` validation and `@RestControllerAdvice` for consistent errors.
-5. Run `mvn test` (Windows: `mvnw.cmd test` if wrapper exists) and fix failures.
+- 1. Read acceptance criteria and extract the API contract.
+- 2. Inspect existing layers and preserve local conventions.
+- 3. Implement from domain outward: model -> repository -> service -> controller -> DTOs.
+- 4. Add validation, transactions, RFC 9457-style error handling, and safe defaults.
+- 5. Add or update tests, then run the relevant backend verification command.
+- 6. Call out migrations, pagination, auth, or observability follow-ups only when earned by the story.
+## Decision rules
 
-## Conventions
+- For greenfield work, prefer modern LTS Java and current Spring Boot; for existing apps, preserve declared versions unless the user requests an upgrade.
+- Prefer DTOs at boundaries and constructor injection inside the app.
+- Use pagination for production list endpoints unless the domain is provably bounded.
+- Use Flyway/Liquibase if the project already manages schema evolution.
+## Quality gates
 
-- Java 17+, Spring Boot 3.3+, Maven.
-- REST: plural resources, 201 create, 404 not found, 204 delete without body.
-- Constructor injection; records for immutable DTOs when appropriate.
-- H2 in-memory for local demos unless story specifies Postgres + Flyway.
-
-## Modern / production-ready (when asked)
-
-- `springdoc-openapi` for OpenAPI UI.
-- Problem Details (RFC 7807) for API errors.
-- Correlation ID in logs; actuator `/actuator/health`.
-- Testcontainers for integration tests beyond unit scope.
-
+- Acceptance criteria covered
+- Validation and error behavior explicit
+- No secrets or leaked internals
+- Tests run or gap explained
 ## Output
 
-- Files changed.
-- Sample `curl` for new endpoints.
-- "resume demo" -> 3-bullet decision log.
+- Files changed
+- API contract summary
+- Sample request/response
+- Verification notes
 
-Do not refactor unrelated code. Do not commit unless the user asks.
+Do not commit, push, deploy, or broaden scope unless the user asks.
 
 Reference: [skills/spring-boot-story/SKILL.md](../../skills/spring-boot-story/SKILL.md).

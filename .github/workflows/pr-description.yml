@@ -1,0 +1,158 @@
+name: PR Description
+
+on:
+  pull_request:
+    types: [opened, edited, synchronize, reopened, ready_for_review]
+
+permissions:
+  contents: read
+  pull-requests: write
+
+jobs:
+  update-description:
+    if: github.event.pull_request.head.repo.full_name == github.repository
+    runs-on: ubuntu-latest
+    steps:
+      - name: Build and update PR description
+        uses: actions/github-script@v9
+        with:
+          script: |
+            const owner = context.repo.owner;
+            const repo = context.repo.repo;
+            const pull_number = context.payload.pull_request.number;
+
+            const files = await github.paginate(github.rest.pulls.listFiles, {
+              owner,
+              repo,
+              pull_number,
+              per_page: 100,
+            });
+
+            const commits = await github.paginate(github.rest.pulls.listCommits, {
+              owner,
+              repo,
+              pull_number,
+              per_page: 100,
+            });
+
+            const categories = [
+              {
+                title: 'Agents and skills',
+                matches: (path) =>
+                  path.startsWith('.github/agents/') ||
+                  path.startsWith('.github/skills/') ||
+                  path.startsWith('.cursor/agents/') ||
+                  path.startsWith('skills/'),
+              },
+              {
+                title: 'GitHub automation',
+                matches: (path) =>
+                  path.startsWith('.github/workflows/') ||
+                  path === '.github/dependabot.yml' ||
+                  path === '.github/pull_request_template.md',
+              },
+              {
+                title: 'Backend',
+                matches: (path) => path.startsWith('backend/'),
+              },
+              {
+                title: 'Frontend',
+                matches: (path) => path.startsWith('frontend/'),
+              },
+              {
+                title: 'Scripts',
+                matches: (path) => path.startsWith('scripts/'),
+              },
+              {
+                title: 'Documentation',
+                matches: (path) =>
+                  path.startsWith('docs/') ||
+                  path.endsWith('.md'),
+              },
+            ];
+
+            const grouped = new Map(categories.map(({ title }) => [title, []]));
+            const other = [];
+
+            for (const file of files) {
+              const match = categories.find(({ matches }) => matches(file.filename));
+              (match ? grouped.get(match.title) : other).push(file);
+            }
+
+            const changedFiles = files.length;
+            const additions = files.reduce((sum, file) => sum + file.additions, 0);
+            const deletions = files.reduce((sum, file) => sum + file.deletions, 0);
+
+            const summary = [];
+            for (const [title, categoryFiles] of grouped.entries()) {
+              if (categoryFiles.length > 0) {
+                summary.push(`- ${title}: ${categoryFiles.length} file${categoryFiles.length === 1 ? '' : 's'} changed`);
+              }
+            }
+            if (other.length > 0) {
+              summary.push(`- Other: ${other.length} file${other.length === 1 ? '' : 's'} changed`);
+            }
+
+            const fileLines = files.slice(0, 25).map((file) =>
+              `- \`${file.filename}\` - ${file.status}, +${file.additions}/-${file.deletions}`
+            );
+            if (files.length > 25) {
+              fileLines.push(`- ...and ${files.length - 25} more file${files.length - 25 === 1 ? '' : 's'}`);
+            }
+
+            const commitLines = commits.slice(-10).map((commit) => {
+              const firstLine = commit.commit.message.split('\n')[0];
+              return `- ${commit.sha.slice(0, 7)} ${firstLine}`;
+            });
+
+            const riskNotes = [];
+            if (files.some((file) => file.filename.startsWith('.github/workflows/'))) {
+              riskNotes.push('- Workflow / automation changes included');
+            }
+            if (files.some((file) => file.filename.startsWith('backend/'))) {
+              riskNotes.push('- Backend behavior changed');
+            }
+            if (files.some((file) => file.filename.startsWith('frontend/'))) {
+              riskNotes.push('- Frontend behavior changed');
+            }
+            if (files.some((file) => file.filename.includes('security') || file.filename === 'SECURITY.md')) {
+              riskNotes.push('- Security-related files changed');
+            }
+            if (riskNotes.length === 0) {
+              riskNotes.push('- No obvious high-risk areas detected from paths alone');
+            }
+
+            const autoBlock = [
+              '<!-- auto-pr-description:start -->',
+              '## Auto-generated PR summary',
+              '',
+              `**Scope:** ${changedFiles} file${changedFiles === 1 ? '' : 's'} changed, +${additions}/-${deletions}`,
+              '',
+              '### What changed',
+              summary.join('\n') || '- No files detected',
+              '',
+              '### Files',
+              fileLines.join('\n') || '- No files detected',
+              '',
+              '### Recent commits',
+              commitLines.join('\n') || '- No commits detected',
+              '',
+              '### Review notes',
+              riskNotes.join('\n'),
+              '',
+              '> This section is maintained automatically from the PR diff and commit list. Add any human context above or below it.',
+              '<!-- auto-pr-description:end -->',
+            ].join('\n');
+
+            const currentBody = context.payload.pull_request.body || '';
+            const markerPattern = /<!-- auto-pr-description:start -->[\s\S]*?<!-- auto-pr-description:end -->/m;
+            const nextBody = markerPattern.test(currentBody)
+              ? currentBody.replace(markerPattern, autoBlock)
+              : `${currentBody.trim()}${currentBody.trim() ? '\n\n' : ''}${autoBlock}`;
+
+            await github.rest.pulls.update({
+              owner,
+              repo,
+              pull_number,
+              body: nextBody,
+            });

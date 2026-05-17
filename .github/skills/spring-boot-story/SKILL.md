@@ -1,46 +1,43 @@
 ---
 name: spring-boot-story
-description: Implements backend user stories with Java Spring Boot—REST controllers, services, JPA entities, repositories, DTOs, and validation. Use for Spring Boot, Java backend, REST API, JPA, or stories marked backend-only.
+description: Builds backend stories in Spring Boot with project-aware architecture, validation, persistence, observability, and testability. Use when the user asks for work that matches this role or when another agent hands off to this specialty.
 ---
 
-# Spring Boot story agent
+# Spring Boot Story
+
+Deliver backend behavior that is correct today and still comfortable to operate six months from now.
 
 ## Workflow
 
-1. Read the story acceptance criteria and API contract.
-2. Scan existing packages (`controller`, `service`, `repository`, `model`, `dto`).
-3. Implement bottom-up: entity → repository → service → controller → DTOs.
-4. Add validation (`@Valid`, Bean Validation) and consistent error responses (`@ControllerAdvice`).
-5. Add `application.properties`/`yaml` only if required; never commit secrets.
+- 1. Read acceptance criteria and extract the API contract.
+- 2. Inspect existing layers and preserve local conventions.
+- 3. Implement from domain outward: model -> repository -> service -> controller -> DTOs.
+- 4. Add validation, transactions, RFC 9457-style error handling, and safe defaults.
+- 5. Add or update tests, then run the relevant backend verification command.
+- 6. Call out migrations, pagination, auth, or observability follow-ups only when earned by the story.
 
-## Conventions
+## Decision rules
 
-- Java 17+, Spring Boot 3.x.
-- REST: plural nouns, proper HTTP verbs and status codes (201 create, 404 not found).
-- Service layer holds business logic; controllers stay thin.
-- Use constructor injection; prefer records for immutable DTOs when project allows.
-
-## Commands
-
-```bash
-./mvnw test
-./mvnw spring-boot:run
-```
+- For greenfield work, prefer modern LTS Java and current Spring Boot; for existing apps, preserve declared versions unless the user requests an upgrade.
+- Prefer DTOs at boundaries and constructor injection inside the app.
+- Use pagination for production list endpoints unless the domain is provably bounded.
+- Use Flyway/Liquibase if the project already manages schema evolution.
 
 ## Output
 
-- List files created/changed.
-- Sample `curl` or HTTPie for new endpoints.
-- If "resume demo": 3-bullet decision log (design choices).
+- Files changed
+- API contract summary
+- Sample request/response
+- Verification notes
 
-## Modern standards (when applicable)
+## Shared references
 
-- springdoc-openapi for API docs; Problem Details for errors.
-- Actuator health; structured logging; env-based config for secrets.
-- Testcontainers for integration tests beyond unit scope.
-- See [../_shared/MODERN-STANDARDS.md](../_shared/MODERN-STANDARDS.md).
+- Follow [../_shared/MODERN-STANDARDS.md](../_shared/MODERN-STANDARDS.md).
+- Use [../_shared/DECISION-RULES.md](../_shared/DECISION-RULES.md) when choosing between project-fit and greenfield defaults.
+- Use [../_shared/AGENT-OPERATING-MODEL.md](../_shared/AGENT-OPERATING-MODEL.md) for output discipline and handoffs.
 
-## Do not
+## Guardrails
 
-- Refactor unrelated modules.
-- Commit unless the user explicitly asks.
+- Preserve existing project conventions unless the user asks for modernization.
+- Keep diffs focused and call out uncertainty rather than inventing facts.
+- Do not commit, push, deploy, or broaden scope unless the user asks.

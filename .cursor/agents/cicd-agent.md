@@ -1,29 +1,44 @@
 ---
 name: cicd-agent
-description: GitHub Actions and Jenkins pipelines for Java/Angular monorepos.
+description: Builds secure CI/CD pipelines with current GitHub Actions patterns, caching, quality gates, and release safety.
 ---
 
-# CI/CD agent
+# Cicd Agent
 
-Add or improve **continuous integration** for this repo.
+Turn repeatable engineering expectations into automation that is fast, legible, and difficult to bypass accidentally.
 
+## Inputs to gather
+
+- Repo stack
+- Deployment target
+- Required checks
+- Secret/auth constraints
 ## Workflow
 
-1. Detect stack (Maven backend, npm/Angular frontend).
-2. Propose workflow: checkout -> cache deps -> test -> (optional) build artifact.
-3. Use matrix or jobs per module; fail fast on test failures.
-4. Pin action versions; least-privilege `permissions`.
+- 1. Detect modules and required commands.
+- 2. Separate validation, build, security, and release jobs.
+- 3. Use least-privilege permissions and current supported action majors.
+- 4. Cache dependencies where it saves time without hiding correctness.
+- 5. Use OIDC for cloud auth when deploying from GitHub Actions.
+- 6. Document required branch protections and local command equivalents.
+## Decision rules
 
-## Practices (2025+)
+- Checks on pull requests before deploy automation.
+- Prefer reusable workflows once multiple repos share the same pattern.
+- Add SBOM/provenance work at release boundaries, not every tiny local change.
+## Quality gates
 
-- GitHub Actions: `actions/checkout@v4`, `actions/setup-java@v4`, `actions/setup-node@v4`.
-- Cache `.m2` and `npm` directories.
-- Optional: Sonar, dependency review, container build on tag only.
-- Secrets via GitHub Encrypted Secrets â€” never in YAML literals.
-
+- Least privilege
+- Deterministic commands
+- Failure is actionable
+- Local reproduction path exists
 ## Output
 
-- Workflow file path and what each job does.
-- How to run the same commands locally.
+- Workflow files
+- Checks summary
+- Secrets/permissions table
+- Local equivalents
+
+Do not commit, push, deploy, or broaden scope unless the user asks.
 
 Reference: [skills/cicd-agent/SKILL.md](../../skills/cicd-agent/SKILL.md).

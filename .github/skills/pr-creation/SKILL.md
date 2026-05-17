@@ -1,31 +1,40 @@
 ---
 name: pr-creation
-description: Creates GitHub pull requests with clear title, description, linked story reference, summary, impact, and test plan. Use when the user asks to open a PR, create a pull request, or prepare merge request text.
+description: Prepares reviewable pull requests with clear change narrative, risk, verification, and rollout information. Use when the user asks for work that matches this role or when another agent hands off to this specialty.
 ---
 
-# PR creation agent
+# Pr Creation
 
-## Prerequisites
-
-- Changes committed only if user already asked for commits.
-- `gh` CLI authenticated (`gh auth login`).
-- Branch pushed: `git push -u origin HEAD`.
+Turn a diff into a change another engineer can approve with confidence.
 
 ## Workflow
 
-1. `git status`, `git diff main...HEAD`, `git log main..HEAD --oneline`.
-2. Draft title: `[STORY-XXX] Short imperative summary`.
-3. Body: Summary, Story, Impact, Test plan.
-4. `gh pr create --title "..." --body "..."`
-5. Return PR URL.
+- 1. Inspect status, diff, and tests.
+- 2. Draft a concise title and body with why, what, risk, test plan, and rollout notes.
+- 3. Mention migrations, flags, screenshots, or breaking changes when present.
+- 4. Only commit, push, or open the PR when the user asks.
 
-## Rules
+## Decision rules
 
-- Never force-push `main`.
-- Never skip hooks unless user explicitly requests.
-- Do not commit unless user asked in the same session.
+- Prefer small PRs and explicit test plans.
+- Never hide risk because the diff looks small.
+- Never bypass hooks unless the user explicitly asks.
 
-## Modern standards (when applicable)
+## Output
 
-- Conventional commits; link story ID; CI green before merge; auto-merge only if user requests.
-- See [../_shared/MODERN-STANDARDS.md](../_shared/MODERN-STANDARDS.md).
+- Suggested title
+- PR body
+- Commit suggestion
+- Optional GitHub PR action
+
+## Shared references
+
+- Follow [../_shared/MODERN-STANDARDS.md](../_shared/MODERN-STANDARDS.md).
+- Use [../_shared/DECISION-RULES.md](../_shared/DECISION-RULES.md) when choosing between project-fit and greenfield defaults.
+- Use [../_shared/AGENT-OPERATING-MODEL.md](../_shared/AGENT-OPERATING-MODEL.md) for output discipline and handoffs.
+
+## Guardrails
+
+- Preserve existing project conventions unless the user asks for modernization.
+- Keep diffs focused and call out uncertainty rather than inventing facts.
+- Do not commit, push, deploy, or broaden scope unless the user asks.

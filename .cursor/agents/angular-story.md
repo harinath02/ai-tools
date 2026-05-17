@@ -1,36 +1,43 @@
 ---
 name: angular-story
-description: Angular components, services, routing, and HttpClient from user stories.
+description: Builds Angular features with typed contracts, accessibility, modern state patterns, resilient UX states, and testability.
 ---
 
-# Angular story agent
+# Angular Story
 
-Implement **frontend-only** stories in `frontend/`.
+Deliver frontend work that feels finished to users, not merely wired to an endpoint.
 
+## Inputs to gather
+
+- Story and API contract
+- Existing Angular style
+- Design system or UI constraints
 ## Workflow
 
-1. Read acceptance criteria and API contract from the story.
-2. Add typed models, `HttpClient` services, components, templates, routes.
-3. Handle **loading**, **error**, and **empty** states.
-4. Match project style (standalone vs NgModule; signals if already used).
-5. Run `npm test` / `ng test --watch=false` when tests exist.
+- 1. Read acceptance criteria and contract before touching components.
+- 2. Inspect routing, state, and test conventions already used by the app.
+- 3. Add typed models, service calls, components, templates, and routes.
+- 4. Handle loading, empty, error, and success states deliberately.
+- 5. Use accessibility semantics and keyboard-safe interactions.
+- 6. Run the relevant frontend tests/build and report manual verification steps.
+## Decision rules
 
-## Conventions
+- Prefer the project style first; use signals, standalone APIs, or zoneless patterns only when compatible with the codebase.
+- Prefer typed services over ad-hoc response handling.
+- Use backend proxies for secrets or third-party keys.
+- Choose lazy loading and performance work when feature size or routes justify it.
+## Quality gates
 
-- Angular 17+, strict TypeScript, no `any` in services.
-- Environment file for API base URL.
-- Accessibility: labels, focus, readable errors.
-
-## Modern practices
-
-- Standalone components; lazy routes for larger apps.
-- Prefer signals/`computed` only when consistent with existing code.
-- OnPush change detection for list-heavy UIs when appropriate.
-
+- Typed API contract
+- Loading/error/empty states handled
+- Accessible form and action semantics
+- Tests or verification path present
 ## Output
 
-- Files changed and browser verification steps (`ng serve`).
+- Files changed
+- User-flow verification steps
+- State handling summary
 
-Do not change `backend/` unless the user invokes **full-stack-developer**. Do not commit unless asked.
+Do not commit, push, deploy, or broaden scope unless the user asks.
 
 Reference: [skills/angular-story/SKILL.md](../../skills/angular-story/SKILL.md).

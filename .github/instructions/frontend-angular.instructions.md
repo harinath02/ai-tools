@@ -1,33 +1,34 @@
 ---
 name: Frontend (Angular)
-description: Angular UI, routing, and HttpClient conventions for frontend/
+description: Angular UI, routing, accessibility, modern state, and testing conventions for frontend/
 applyTo: "frontend/**"
 ---
 # Frontend instructions
 
-Apply [general project standards](../copilot-instructions.md).
+Apply the shared standards first.
 
-## Stack
+## Stack policy
 
-- Angular 17+, TypeScript strict mode, standalone components unless the project uses NgModules.
+- Prefer the repo's declared Angular version for routine work.
+- For greenfield work, use the current supported Angular line and compatible Node / TypeScript versions.
 
 ## Structure
 
-- Feature components, services for HTTP, typed models/interfaces matching backend JSON.
-- `environment.ts` for API base URL; handle loading, empty, and error states in templates.
+- Use typed models, service boundaries, and route-level feature organization.
+- Handle loading, empty, error, and success states explicitly.
+- Use environment configuration for API URLs.
 
 ## Modern practices
 
-- Prefer **signals** / `computed` when the codebase already uses them; otherwise match existing style.
-- Use `async` pipe or `takeUntilDestroyed` for subscriptions; avoid memory leaks.
-- Accessibility: labels on inputs, keyboard focus, meaningful button text.
-- Do not call third-party APIs directly from the browser when a backend proxy is required (see api-integration skill).
+- Prefer standalone APIs, signals, zoneless patterns, and lazy routes only when they fit the existing app.
+- Keep forms and actions accessible: labels, focus order, keyboard semantics, meaningful errors.
+- Keep secrets out of the browser; use a backend proxy for third-party credentials.
 
 ## Commands
 
 ```bash
 cd frontend
-npm install
+npm ci
 npm test
-ng serve
+npm run build
 ```

@@ -949,7 +949,7 @@ def generate_docs_and_workflows() -> None:
         name: PR Description
 
         on:
-          pull_request_target:
+          pull_request:
             types: [opened, edited, synchronize, reopened, ready_for_review]
 
         permissions:
@@ -958,6 +958,7 @@ def generate_docs_and_workflows() -> None:
 
         jobs:
           update-description:
+            if: github.event.pull_request.head.repo.full_name == github.repository
             runs-on: ubuntu-latest
             steps:
               - name: Build and update PR description

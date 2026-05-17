@@ -1,0 +1,20 @@
+---
+description: Routes user requests to the correct full-stack subagent or skill and story workflow
+alwaysApply: true
+---
+
+# Full-stack agent orchestrator
+
+When the user asks to implement, test, review, refactor, document, or deploy:
+
+1. Check `demo/stories/` for a matching story (STORY-001, etc.).
+2. **Cursor:** agents in `.cursor/agents/` (synced from `.github/agents/`).
+3. **VS Code / Copilot:** same agents in `.github/agents/*.agent.md` — see `docs/VSCODE-COPILOT-GUIDE.md`.
+4. Backend → spring-boot-story; Frontend → angular-story; E2E → full-stack-developer.
+5. Run test-writer after code changes unless user says tests are out of scope.
+6. Commits and PRs only when the user explicitly requests.
+7. Unsure which agent → orchestrator or `skills/orchestrator/SKILL.md`.
+
+Sample: `Use the spring-boot-story agent. Implement demo/stories/STORY-001-task-api.md`
+
+After agent edits in repo: `.\scripts\install-copilot.ps1`

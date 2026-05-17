@@ -1,0 +1,24 @@
+# OS
+.DS_Store
+Thumbs.db
+
+# IDE
+.idea/
+*.iml
+.vscode/
+*.swp
+
+# Generated demo apps (created when you run stories)
+backend/target/
+backend/.mvn/wrapper/maven-wrapper.jar
+frontend/node_modules/
+frontend/dist/
+frontend/.angular/
+
+# Secrets
+.env
+.env.local
+*.pem
+
+# Logs
+*.log

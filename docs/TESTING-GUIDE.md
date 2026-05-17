@@ -24,4 +24,4 @@ mvn test
 
 - `CI` - pack validation plus backend/frontend verification
 - `CodeQL` - code scanning
-- `Dependency Review` - blocks vulnerable dependency additions on pull requests
+- `PR Description` - keeps a generated summary block in each pull request body

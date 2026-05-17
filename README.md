@@ -2,7 +2,7 @@
 
 [![CI](https://github.com/harinath02/ai-tools/actions/workflows/ci.yml/badge.svg)](https://github.com/harinath02/ai-tools/actions/workflows/ci.yml)
 [![CodeQL](https://github.com/harinath02/ai-tools/actions/workflows/codeql.yml/badge.svg)](https://github.com/harinath02/ai-tools/actions/workflows/codeql.yml)
-[![Dependency Review](https://github.com/harinath02/ai-tools/actions/workflows/dependency-review.yml/badge.svg)](https://github.com/harinath02/ai-tools/actions/workflows/dependency-review.yml)
+[![PR Description](https://github.com/harinath02/ai-tools/actions/workflows/pr-description.yml/badge.svg)](https://github.com/harinath02/ai-tools/actions/workflows/pr-description.yml)
 
 A reusable multi-agent toolkit for moving from **story -> design -> code -> tests -> review -> release** with modern engineering guardrails for Spring Boot + Angular teams.
 
@@ -12,7 +12,7 @@ A reusable multi-agent toolkit for moving from **story -> design -> code -> test
 - Portable **skills** for VS Code / Copilot and Cursor
 - Shared enterprise standards covering API design, testing, security, observability, performance, and supply-chain hygiene
 - Demo stories in `demo/stories/`
-- GitHub workflows for CI, agent-pack validation, CodeQL, and dependency review
+- GitHub workflows for CI, agent-pack validation, CodeQL, and automatic PR descriptions
 
 ## Agent flow
 

@@ -890,25 +890,57 @@ def generate_docs_and_workflows() -> None:
           security-events: write
 
         jobs:
-          analyze:
+          detect:
             runs-on: ubuntu-latest
-            strategy:
-              fail-fast: false
-              matrix:
-                include:
-                  - language: java-kotlin
-                    build-mode: none
-                  - language: javascript-typescript
-                    build-mode: none
-                  - language: actions
-                    build-mode: none
+            outputs:
+              frontend: ${{ steps.modules.outputs.frontend }}
+            steps:
+              - uses: actions/checkout@v6
+              - id: modules
+                shell: bash
+                run: |
+                  echo "frontend=$([[ -f frontend/package.json ]] && echo true || echo false)" >> "$GITHUB_OUTPUT"
+
+          analyze-java:
+            name: Analyze (java-kotlin)
+            runs-on: ubuntu-latest
             steps:
               - uses: actions/checkout@v6
               - uses: github/codeql-action/init@v4
                 with:
-                  languages: ${{ matrix.language }}
-                  build-mode: ${{ matrix.build-mode }}
+                  languages: java-kotlin
+                  build-mode: none
               - uses: github/codeql-action/analyze@v4
+                with:
+                  category: "/language:java-kotlin"
+
+          analyze-actions:
+            name: Analyze (actions)
+            runs-on: ubuntu-latest
+            steps:
+              - uses: actions/checkout@v6
+              - uses: github/codeql-action/init@v4
+                with:
+                  languages: actions
+                  build-mode: none
+              - uses: github/codeql-action/analyze@v4
+                with:
+                  category: "/language:actions"
+
+          analyze-javascript-typescript:
+            name: Analyze (javascript-typescript)
+            needs: detect
+            if: needs.detect.outputs.frontend == 'true'
+            runs-on: ubuntu-latest
+            steps:
+              - uses: actions/checkout@v6
+              - uses: github/codeql-action/init@v4
+                with:
+                  languages: javascript-typescript
+                  build-mode: none
+              - uses: github/codeql-action/analyze@v4
+                with:
+                  category: "/language:javascript-typescript"
         """,
     )
     write(
